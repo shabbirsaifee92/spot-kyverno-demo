@@ -1,0 +1,33 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: spot-tolerations-affinity
+  annotations:
+    policies.kyverno.io/title: Add Tolerations and Affinity for spot nodes
+    kyverno.io/kyverno-version: 1.11.1
+    policies.kyverno.io/minversion: 1.6.0
+    kyverno.io/kubernetes-version: "1.23"
+    policies.kyverno.io/description: >-
+      Pod tolerations are used to schedule on Nodes which have
+      a matching taint.
+      This policy adds:
+      1. tolerations for spot nodes
+      2. Node affinity to prefer spot nodes over default nodes
+spec:
+  rules:
+  - name: spot-instance-policy
+    match:
+      any:
+      - resources:
+          kinds:
+          - Deployment
+          - StatefulSet
+    mutate:
+      patchesJson6902: |-
+        - op: add
+          path: "/spec/template/spec/tolerations/-"
+          value: {"key":"kubernetes.azure.com/scalesetpriority","operator":"Equal","value":"spot","effect":"NoSchedule"}
+        - op: add
+          path: "/spec/template/spec/affinity/nodeAffinity/preferredDuringSchedulingIgnoredDuringExecution/-"
+          value: { "weight": 100, "preference": {"matchExpressions": [ {"key": "kubernetes.azure.com/scalesetpriority","operator": "In", "values": ["spot"] } ] } }
+

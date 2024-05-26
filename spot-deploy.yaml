@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spot
+  name: spot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spot
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: spot
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+
