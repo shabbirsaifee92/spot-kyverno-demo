@@ -5,7 +5,7 @@ metadata:
     app: spot
   name: spot
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: spot
@@ -19,4 +19,18 @@ spec:
       - image: nginx
         name: nginx
         resources: {}
-
+      # tolerations:
+      #   - key: "kubernetes.azure.com/scalesetpriority"
+      #     operator: "Equal"
+      #     value: "spot"
+      #     effect: "NoSchedule"
+      # affinity:
+      #   nodeAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #     - weight: 100
+      #       preference:
+      #         matchExpressions:
+      #         - key: kubernetes.azure.com/scalesetpriority
+      #           operator: In
+      #           values:
+      #           - spot
